@@ -1,0 +1,276 @@
+--create trigger T1
+--on Student
+--for Insert
+--as
+--begin
+--	declare @depID int;
+--	declare @sessionID varchar(50);
+--	declare @count int;
+--	declare @stdID varchar(50);
+--	declare @serialno int;
+--	declare @StdLoginID varchar(50);
+--	declare @CNIC varchar(20);
+--	declare @Coun int;
+--select * into #t1 from inserted;
+--while(exists(select top(1)* from #t1))
+--begin
+--	select top(1) @sessionID=t.SessionID,@depID=t.DepID,@CNIC=t.CNIC from #t1 as t
+--	set @count=(select count(*) from student as std where std.sessionID=@sessionID);
+--	set @count=@count+1;
+--	set @stdID=(@sessionID+cast(@count as varchar(10)));
+--	set @StdLoginID=@stdID+'@student.uet.edu.pk'
+--	insert into Accounts(LogID) values (@StdLoginID);
+
+--		Set @Coun=(select count(*) from Student as S1 where S1.SessionID=@sessionID);
+--		if(@Coun< 50)
+--		begin
+--		update Student
+--		set Section='A'
+--		where CNIC=@CNIC;
+--		end
+--		else if(@Coun>50)
+--		begin
+--		   update student
+--		   set Section='B'
+--		   where CNIC=@CNIC;
+--		end
+
+--	update Student
+--	set PuppilID=@stdID,LoginID=@StdLoginID
+--	where CNIC=@CNIC;
+--	delete top(1) from #t1;
+--	end
+--	end
+
+--create trigger T2
+--on Faculty
+--for INSERT
+--as
+--begin
+--	declare @DepID int;
+--	declare @FacID varchar(50);
+--	declare @Serialno int;
+--	declare @CNIC varchar(20);
+--	declare @DepName varchar(50);
+--	declare @FName varchar(50)
+--	declare @FacLoginID varchar(50);
+--select*into #t2 from inserted;
+--while(exists(select top(1)* from #t2))
+--begin
+--	select top(1) @DepID=t.DepID,@CNIC=t.CNIC,@Serialno=t.FacCounter,@FName=t.FiName from #t2 as t
+--	set @DepName=(select d.DepName from Departments as d where d.DepID=@DepID);
+--		if(@DepName='COMPUTER SCIENCE')
+--		begin
+--			set @FacID=@FName+'CS'+cast(@Serialno as varchar(10));
+--		end
+--		if(@DepName='ELECTRICAL')
+--		begin
+--			set @FacID=@FName+'EE'+cast(@Serialno as varchar(10));
+--		end
+--		if(@DepName='CHEMICAL')
+--		begin
+--			set @FacID=@FName+'CH'+cast(@Serialno as varchar(10));
+--		end
+--		if(@DepName='BASIC SCIENCE')
+--		begin
+--			set @FacID=@FName+'BS'+cast(@Serialno as varchar(10));
+--		end
+--		if(@DepName='MECHANICAL')
+--		begin
+--			set @FacID=@FName+'ME'+cast(@Serialno as varchar(10));
+--		end
+--		if(@DepName='MINING')
+--		begin
+--			set @FacID=@FName+'MI'+cast(@Serialno as varchar(10));
+--		end
+--		if(@DepName='CIVIL')
+--		begin
+--			set @FacID=@FName+'CE'+cast(@Serialno as varchar(10));
+--		end
+--		if(@DepName='BIO MEDICAL')
+--		begin
+--			set @FacID=@FName+'BM'+cast(@Serialno as varchar(10));
+--		end
+--		if(@DepName='FASHION DESIGN')
+--		begin
+--			set @FacID=@FName+'FD'+cast(@Serialno as varchar(10));
+--		end
+--		if(@DepName='ARTS')
+--		begin
+--			set @FacID=@FName+'AD'+cast(@Serialno as varchar(10));
+--		end
+--	set @FacLoginID=@FacID+'@uet.edu.pk';
+--	insert into Accounts(LogID) values (@FacLoginID);
+--	update Faculty
+--	set FacID=@FacID,LoginID=@FacLoginID
+--	where CNIC=@CNIC;
+--	delete top(1) from #t2;
+--end
+--end
+
+
+--create trigger T3
+--on HOD
+--for insert
+--as
+--begin
+--	declare @facID varchar(50);
+--	declare @serialno int;
+--	declare @CNIC varchar(20);
+--	declare @FName varchar(50)
+--	declare @facloginID varchar(50);
+--select*into #t3 from inserted;
+--while(exists(select top(1)* from #t3))
+--begin
+--	select top(1) @CNIC=t.CNIC,@serialno=t.AdminCounter,@FName=t.FName from #t3 as t
+--	set @facID=@FName+cast(@serialno as varchar(10));
+--	set @facloginID=@facID+'@admin.uet.edu.pk';
+--	insert into Accounts(LogID) values (@facloginID);
+--	update HOD
+--	set HODId=@facID,LoginID=@facloginID
+--	where CNIC=@CNIC;
+--	delete top(1) from #t3;
+--end
+--end
+
+--create trigger T6
+--on AteendenceRecord
+--for insert
+--as
+--begin
+--    declare @stdID varchar(50);
+--	declare @facID varchar(50);
+--	declare @subID int;
+--	declare @courseID int;
+--	declare @KEY0 int;
+--	declare @KEY01 int;
+--	select *into #T4 from inserted;
+--	create table #T5([Course ID] int);
+--	while(exists(select top(1)* from #T4))
+--	begin
+--	   select top(1) @stdID=t.PuppilID,@subID=t.SubId,@facID=t.FacID from #T4 as t
+--	   set @KEY0=-1;
+--	   set @KEY01=-1;
+--	   insert into #T5([Course ID]) (select CR.CourseId from CourseRegs as CR where CR.PuppilID=@stdID);
+--	   while(exists(select top(1)* from #T5))
+--	   begin
+--	       select top(1) @courseID=t.[Course ID] from #T5 as t;
+--		   if(exists(select R.SubId from(select s.SubId from Subjects as s where s.CourseId=@courseID) as R where R.SubId=@subID))
+--		   begin
+--		       set @KEY0=1;
+--			   break;
+--		   end
+--		   delete top(1) #T5
+--	   end
+--	   if(exists(select fd.FacID from (select f.FacID from FacultySubjects as f where f.SubId=@subID) as fd where fd.FacID=@facID))
+--	   begin
+--	      set @KEY01=1;
+--	   end
+--	   if(@KEY0=1 and @KEY01=1)
+--	   begin
+--	    print('ATTENDENCE CAPTURED');
+--	   end
+--	   else if(@KEY0!=1 or @KEY01!=1)
+--	   begin
+--	      if(@KEY0=-1)
+--		  begin
+--		    select s.FName from Student as s where s.PuppilID=@stdID;
+--		    print('SUBJECTS ILLEGAL !!');
+--			rollback;
+--		  end
+--		  if(@KEY01=-1)
+--		  begin
+--		    select f.FiName from Faculty as f where f.FacID=@facID;
+--		    print('TEACHER ILLEGAL !!');
+--			rollback;
+--		  end
+--	   end
+--	   delete top(1) from #T4
+--	end
+--end
+
+--create trigger T7
+--on FeeRecord
+--for insert
+--as
+--begin
+--	declare @stdID varchar(50);
+--	declare @amount int;
+--	declare @chaalanFormNo int;
+--	declare @sessionID varchar(50);
+--	declare @issueDate date;
+--	declare @hostelStatus varchar(10);
+--select*into #t9 from inserted;
+--create table #t5(DMC_ID int,FacID varchar(50),Sub_ID int,stdID varchar(50),Grade varchar(2));
+--while(exists(select top(1)* from #t9))
+--begin
+--	select top(1) @stdID=t.PuppilID,@chaalanFormNo=t.ChalanNo,@issueDate=t.IssueDate from #t9 as t;
+--	set @sessionID=(select s.SessionID from Student as s where s.PuppilID=@stdID);
+--	set @hostelStatus=(select s.HostelAllotment from Student as s where s.PuppilID=@stdID);
+--	set @amount=(select S1.Fee from Sessions as S1 where S1.SessionID=@sessionID);
+--		if(@hostelStatus='Allocated')
+--		begin
+--		set @amount=@amount+5000; --adding fee of aquiring hostel
+--		end
+--		update FeeRecord
+--		set Amount=@amount, AfterDue=@amount+5000
+--		where ChalanNo=@chaalanFormNo;
+--		delete top(1) from #t9;
+--end
+--end
+
+--create trigger T10
+--on DMC
+--for insert
+--as
+--begin
+--    declare @stdID varchar(50);
+--	declare @facID varchar(50);
+--	declare @subID int;
+--	declare @courseID int;
+--	declare @Key0 int;
+--	declare @Key01 int;
+--	select *into #T8 from inserted;
+--	create table #t9([Course ID] int);
+--	while(exists(select top(1)* from #T8))
+--	begin
+--	   select top(1)@stdID=t.PuppilID,@subID=t.SubId,@facID=t.FacID from #T8 as t
+--	   set @Key0=-1;
+--	   set @Key01=-1;
+--	    insert into #t9([Course ID]) (select SRG.CourseId from CourseRegs as SRG where SRG.PuppilID=@stdID);
+--	   while(exists(select top(1)* from #t9))
+--	   begin
+--	       select top(1) @courseID=t.[Course ID] from #t9 as t;
+--		   if(exists(select R.SubId from(select s.SubId from Subjects as s where s.CourseId=@courseID) as R where R.SubId=@subID))
+--		   begin
+--		       set @Key0=1;
+--			   break;
+--		   end
+--		   delete top(1) #t9
+--	   end
+--	   if(exists(select fd.FacID from (select f.FacID from FacultySubjects as f where f.SubId=@subID) as fd where fd.FacID=@facID))
+--	   begin
+--	      set @Key01=1;
+--	   end
+--	   if(@Key0=1 and @Key01=1)
+--	   begin
+--	    print('GRADE CAPTURED !!');
+--	   end
+--	   else if(@Key0!=1 or @Key01!=1)
+--	   begin
+--	      if(@Key0=-1)
+--		  begin
+--		    select s.FName from Student as s where s.PuppilID=@stdID;
+--		    print('ILLEGAL STUDENT !!');
+--			rollback;
+--		  end
+--		  if(@Key01=-1)
+--		  begin
+--		    select f.FiName from Faculty as f where f.FacID=@facID;
+--		    print('ILLEGAL TEACHER !!');
+--			rollback;
+--		  end
+--	   end
+--	   	   delete top(1) from #T8
+--	end
+--end

@@ -1,0 +1,126 @@
+--create procedure CalAge
+--@DOB Date
+--as 
+--begin
+--   return DateDiff(YEAR,@DOB,getdate());
+--end
+
+--create procedure ADDSTD
+--@FN varchar(50),
+--@LN varchar(50),
+--@DOB date,
+--@CNIC varchar(20),
+--@DepID int,
+--@SessionID varchar(50),
+--@HostelStatus varchar(20)
+--as 
+--begin
+--   Declare @age int;
+--   exec @age=CalAge @DOB;
+--   insert into Student(FName,LName,DOB,Age,CNIC,DepID,SessionID,HostelAllotment)
+--   values (@FN,@LN,@DOB,@age,@CNIC,@DepID,@SessionID,@HostelStatus);
+--   print('STUDENT ADDED SUCCESS !!')
+--end
+
+
+--create procedure ADDFAC
+--@Fname varchar(50),
+--@Lname varchar(50),
+--@DOB date,
+--@CNIC varchar(20),
+--@depID int,
+--@hostelStatus varchar(20)
+--as 
+--begin
+--   declare @age int;
+--   exec @age=CalAge @DOB
+--   insert into Faculty(FiName,LaName,DOB,Age,CNIC,DepID,HostelAllotment)
+--   values (@Fname,@Lname,@DOB,@age,@CNIC,@depID,@hostelStatus);
+--   print('FACULTY ADDED SUCCESS !!')
+--end
+
+--create procedure ADDHOD
+--@Fname varchar(50),
+--@Lname varchar(50),
+--@DOB date,
+--@depID int,
+--@CNIC varchar(20)
+--as 
+--begin
+--   declare @age int;
+--   exec @age=CalAge @DOB
+--   insert into HOD(FName,LName,DOB,Age,DepID,CNIC)
+--   values (@Fname,@Lname,@DOB,@age,@depID,@CNIC);
+--   print('HOD ALLOTED !!');
+--end
+
+--create procedure GPACalc
+--@stdID varchar(50)
+--as
+--begin
+--      declare @GPA float;
+--	  declare @ObtailCreditHour float;
+--	  declare @TotalCreditHour int;
+--	  declare @creditofSub float;
+--	  declare @subID int;
+--	  declare @grade varchar(2);
+--      set @ObtailCreditHour=0;
+--	  set @TotalCreditHour=0;
+--	  select* into #t5 from DMC as DR where DR.PuppilID=@stdID;
+--	  while(exists(select top(1)* from #t5))
+--	  begin
+--	       select top(1) @subID=DR.SubId,@grade=DR.Grade from #t5 as DR
+--		   set @creditofSub=(select s.CreditsHours from Subjects as s where s.SubId=@subID);
+--		   set @TotalCreditHour=@TotalCreditHour+@creditofSub;
+--		   if(@grade='A+' or @grade='A')
+--		   begin
+--		       set @creditofSub=@creditofSub*4;
+--		      set @ObtailCreditHour=@ObtailCreditHour+@creditofSub;
+--		   end
+--		   else if(@grade='A-')
+--		   begin
+--		       set @creditofSub=@creditofSub*3.7;
+--		      set @ObtailCreditHour=@ObtailCreditHour+@creditofSub;
+--		   end
+--		   else if(@grade='B+')
+--		   begin
+--		       set @creditofSub=@creditofSub*3.3;
+--		      set @ObtailCreditHour=@ObtailCreditHour+@creditofSub;
+--		   end
+--		   else if(@grade='B')
+--		   begin
+--		       set @creditofSub=@creditofSub*3;
+--		      set @ObtailCreditHour=@ObtailCreditHour+@creditofSub;
+--		   end
+--		   else if(@grade='B-')
+--		   begin
+--		       set @creditofSub=@creditofSub*2.7;
+--		      set @ObtailCreditHour=@ObtailCreditHour+@creditofSub;
+--		   end
+--		   else if(@grade='C+')
+--		   begin
+--		       set @creditofSub=@creditofSub*2.5;
+--		      set @ObtailCreditHour=@ObtailCreditHour+@creditofSub;
+--		   end
+--		   else if(@grade='C')
+--		   begin
+--		       set @creditofSub=@creditofSub*2.2;
+--		      set @ObtailCreditHour=@ObtailCreditHour+@creditofSub;
+--		   end
+--		   else if(@grade='F')
+--		   begin
+--		       set @creditofSub=@creditofSub*0; --failed
+--		      set @ObtailCreditHour=@ObtailCreditHour+@creditofSub;
+--		   end
+--		   delete top(1) from #t5;
+--	  end
+--	  if(@TotalCreditHour<>0)
+--	  begin
+--	     set @GPA=@ObtailCreditHour/@TotalCreditHour;
+--	  end
+--	  else
+--	  begin
+--	     set @GPA=0;
+--	  end
+--	  select @GPA as [GPA Of Desired Student];
+--end
